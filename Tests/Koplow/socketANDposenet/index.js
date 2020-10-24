@@ -1,12 +1,13 @@
-var app = require('express')();
+var express = require('express')
+var app = express()
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var players = []
 var player_positions = []
+var rooms = []
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static('public'))
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     players.push(socket.id)
@@ -19,11 +20,8 @@ io.on('connection', (socket) => {
         player_positions.splice(idx, 1);
         console.log('user disconnected');
         console.log(players)
-      });
-    socket.on('chat message', (msg) => {
-      
-      console.log('message: ' + msg);
     });
+  
 
     socket.on('pos', (pos) => {
       let idx = players.indexOf(socket.id);
@@ -31,14 +29,9 @@ io.on('connection', (socket) => {
     });
 
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
-      });
-
   });
   setInterval(() => {
     io.emit('positions', player_positions);
-   // console.log(player_positions)
   }, 10);
 
 
