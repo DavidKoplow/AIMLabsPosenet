@@ -1,14 +1,14 @@
-var socket = io();
-$(function () {
+
+function initClient(socket){
 
     $('form').submit(function(e) {
       e.preventDefault(); // prevents page reloading
       return false;
     });
-    socket.on('positions', function(player_positions){
-      positions=player_positions;
+    socket.on('roomdata', function(r){
+      ROOM=r;
     });
-  
-  });
+ 
+}
   
   

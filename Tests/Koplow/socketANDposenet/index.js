@@ -2,39 +2,68 @@ var express = require('express')
 var app = express()
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var players = []
-var player_positions = []
+
+var numRooms = 5;
 var rooms = []
+var room = function(name){
+  this.name = name;
+  this.players = [];
+  this.player_positions = [];
+}
+for(let i = 1; i <= numRooms; i++){
+  rooms.push(new room("Room "+i))
+}
 
 app.use(express.static('public'))
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
-    players.push(socket.id)
-    player_positions.push(null)
-    console.log(players)
+
+    //place player into a room
+    var playerRoom;
+    for(let i = 0; i < numRooms; i++){
+      if(rooms[i].players.length<2){
+        playerRoom=rooms[i];
+        break;
+      }
+    }
+    socket.join(playerRoom.name)
+
+    //add player to serverside registry 
+    playerRoom.players.push(socket.id)
+    playerRoom.player_positions.push(null)
+
+    console.log('a user connected to '+playerRoom.name+" which now has:");
+    console.log(playerRoom.players)
 
     socket.on('disconnect', () => {
-        let idx = players.indexOf(socket.id);
-        players.splice(idx, 1);
-        player_positions.splice(idx, 1);
-        console.log('user disconnected');
-        console.log(players)
+        //remove player from registry
+        let idx = playerRoom.players.indexOf(socket.id);
+        playerRoom.players.splice(idx, 1);
+        playerRoom.player_positions.splice(idx, 1);
+        
+        console.log('user disconnected from '+playerRoom.name+" which now has:");
+        console.log(playerRoom.players)
     });
   
 
-    socket.on('pos', (pos) => {
-      let idx = players.indexOf(socket.id);
-      player_positions[idx]=pos
+    socket.on('senduserpos', (senduserpos) => {
+      let idx = playerRoom.players.indexOf(socket.id);
+      playerRoom.player_positions[idx]=senduserpos
+    });
+
+    socket.on('getroomname', () => {
+      io.to(socket.id).emit('roomname', playerRoom.name);
     });
 
 
-  });
+});
+
+//Periodically send out all posenet locations
+for(let i = 0; i < numRooms; i++){
   setInterval(() => {
-    io.emit('positions', player_positions);
+    io.to(rooms[i].name).emit('roomdata', rooms[i]);
   }, 10);
-
-
+}
 
 http.listen(3000, () => {
   console.log('listening on *:3000');
