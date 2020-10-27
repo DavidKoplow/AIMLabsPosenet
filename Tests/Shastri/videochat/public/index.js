@@ -26,40 +26,49 @@ var pc = new peerConnection({
 });
 
 pc.onaddstream = function (obj) {
+    console.log('object', obj);
+    console.log('socketid', obj.stream.id);
     var vid = document.createElement('video');
     vid.setAttribute('class', 'video-large');
-    vid.setAttribute('autoplay', 'autoplay');
+    vid.setAttribute('autoplay', true);
+    vid.setAttribute('id', obj.stream.id);
     document.getElementById('users-container').appendChild(vid);
     vid.srcObject = obj.stream;
 }
 
 navigator.getUserMedia({video: true, audio: true}, function (stream) {
-    var video = document.querySelector('video');
-    video.srcObject = stream;
+    console.log('getting user media...')
+    var vid = document.createElement('video');
+    vid.setAttribute('class', 'video-large');
+    vid.setAttribute('autoplay', true);
+    vid.setAttribute('muted', false);
+    vid.setAttribute('id', socket.id);
+    document.getElementById('users-container').appendChild(vid);
+    // var video = document.querySelector('video');
+    vid.srcObject = stream;
     pc.addStream(stream);
 }, error);
 
 
 socket.on('add-users', function (data) {
-    console.log('user added!')
     for (var i = 0; i < data.users.length; i++) {
-        var el = document.createElement('div'),
-            id = data.users[i];
+        id = data.users[i];
 
-        el.setAttribute('id', id);
-        el.innerHTML = id;
-        //el.addEventListener('click', function () {
-        createOffer(id);
-        //});
-        document.getElementById('users').appendChild(el);
+        var btn = document.createElement("BUTTON");
+        btn.setAttribute('id', id);
+        btn.innerHTML = id;
+        btn.addEventListener('click', function () {
+            createOffer(id);
+        });
+        document.getElementById('users').appendChild(btn);
     }
 });
 
 socket.on('remove-user', function (id) {
     console.log('user disconnected!')
-    var div = document.getElementById(id);
-    div.removeAttribute('src'); // empty source
-    document.getElementById('users').removeChild(div);
+    var users = document.getElementById('users');
+    btn = document.getElementById(id)
+    users.removeChild(btn); //remove btn
 });
 
 

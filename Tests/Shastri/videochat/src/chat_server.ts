@@ -1,7 +1,9 @@
 //server side
+
 import * as express from 'express';
-import { createServer, Server } from 'http';
 import * as socketIo from 'socket.io'; // new
+
+import { Server, createServer } from 'http';
 
 export class ChatServer {
 
@@ -10,7 +12,7 @@ export class ChatServer {
     private port: string | number;
     private server: Server;
     private io: socketIo.Server;
-    private socketsArray = [];
+    private socketsArray: string[] = [];
 
     constructor() {
         this.createApp();
@@ -38,10 +40,14 @@ export class ChatServer {
             socket.broadcast.emit('add-users', {
                 users: [socket.id]
             });
+            
+            this.socketsArray.push(socket.id)
+            console.log('User connected!', this.socketsArray)
 
             socket.on('disconnect', () => {
                 this.socketsArray.splice(this.socketsArray.indexOf(socket.id), 1);
                 this.io.emit('remove-user', socket.id);
+                console.log('User disconnected!', this.socketsArray)
             });
 
             socket.on('make-offer', (data) => {
