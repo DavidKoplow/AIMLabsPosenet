@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
          5.927495871204883
     ]
     var playerScores = [];
-      if (playerRoom.player_positions[0]!=null || playerRoom.player_positions[1]!=null){
+      if (playerRoom.player_positions[0]!=null && playerRoom.player_positions[1]!=null){
         for (let i=0; i<playerRoom.player_positions.length; i++){
           let playerPose = createArray(i); 
           let score = weightedDistanceMatching(playerPose,compare); 
@@ -121,7 +121,6 @@ io.on('connection', (socket) => {
         }
         var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
         io.to(socket.id).emit('winner', winner);
-      
         console.log(winner); 
       }
     });
