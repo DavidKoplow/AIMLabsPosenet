@@ -142,13 +142,14 @@ for(let i = 0; i < numRooms; i++){
 for(let i = 0; i < numRooms; i++){
   //var elem = document.getElementById("myBar");
   var width = 0;
-  var id = setInterval(posingtime, 20000); 
+  var id = setInterval(posingtime, 1000); 
   function posingtime() {
     if (width == 100) {
-      io.to(rooms[i].name).emit('roomdata', rooms[i]);
+      
       console.log("game over");
       clearInterval(id); 
     } else {
+      io.to(rooms[i].name).emit('roomdata', rooms[i]);
       width++;
       
     }
