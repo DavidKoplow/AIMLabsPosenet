@@ -17,6 +17,9 @@ for(let i = 1; i <= numRooms; i++){
 
 function weightedDistanceMatching(poseVector1, poseVector2) {
   console.log(poseVector1);
+  if (poseVector1==null || poseVector2==null){
+    return 0;
+  }
   let vector1PoseXY = poseVector1.slice(0, 34);
   let vector1Confidences = poseVector1.slice(34, 51);
   let vector1ConfidenceSum = poseVector1.slice(51, 52);
@@ -91,14 +94,15 @@ io.on('connection', (socket) => {
         return posevector1;
       }
       var compare = Array.from(Array(52), () => 50)
-      for (let i=0; i<playerRoom.player_positions.length; i++){
-        let playerPose = createArray(i); 
-        let score = weightedDistanceMatching(playerPose,compare); 
-        playerScores.push(score);
+      if (playerRoom.player_positions[0]!=null || playerRoom.player_positions[0].keypoints.length!=0){
+        for (let i=0; i<playerRoom.player_positions.length; i++){
+          let playerPose = createArray(i); 
+          let score = weightedDistanceMatching(playerPose,compare); 
+          playerScores.push(score);
+        }
+        var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
+        console.log(winner); 
       }
-      var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
-      console.log(winner); 
-
     });
 
     socket.on('getroomname', () => {
