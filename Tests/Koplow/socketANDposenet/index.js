@@ -156,9 +156,9 @@ for(let i = 0; i < numRooms; i++){
 for(let i = 0; i < numRooms; i++){
   //var elem = document.getElementById("myBar");
   var width = 0;
-  var id = setInterval(posingtime, 1000); 
+  var id = setInterval(posingtime, 10); 
   function posingtime() {
-    if (width == 100) {
+    if (width == 5000) {
       clearInterval(id); 
     } else {
       io.to(rooms[i].name).emit('roomdata', rooms[i]);
