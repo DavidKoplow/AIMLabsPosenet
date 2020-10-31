@@ -16,7 +16,7 @@ for(let i = 1; i <= numRooms; i++){
 }
 
 function weightedDistanceMatching(poseVector1, poseVector2) {
-  console.log(poseVector1);
+  
   if (poseVector1==null || poseVector2==null){
     return 0;
   }
@@ -113,7 +113,8 @@ io.on('connection', (socket) => {
          5.927495871204883
     ]
     var playerScores = [];
-      if (playerRoom.player_positions[0]!=null && playerRoom.player_positions[1]!=null){
+    if (playerRoom.player_positions.length==2){
+     if (playerRoom.player_positions[0]!=null && playerRoom.player_positions[1]!=null){
         for (let i=0; i<playerRoom.player_positions.length; i++){
           let playerPose = createArray(i); 
           let score = weightedDistanceMatching(playerPose,compare); 
@@ -122,7 +123,20 @@ io.on('connection', (socket) => {
         var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
         io.to(socket.id).emit('winner', winner);
         console.log(winner); 
-      }
+     }
+    }
+    if (playerRoom.player_positions.length==1){
+      if (playerRoom.player_positions[0]!=null){
+        for (let i=0; i<playerRoom.player_positions.length; i++){
+          let playerPose = createArray(i); 
+          let score = weightedDistanceMatching(playerPose,compare); 
+          playerScores.push(score);
+        }
+        var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
+        io.to(socket.id).emit('winner', winner);
+        console.log(winner); 
+     }
+    }
     });
 
     socket.on('getroomname', () => {
@@ -145,8 +159,6 @@ for(let i = 0; i < numRooms; i++){
   var id = setInterval(posingtime, 1000); 
   function posingtime() {
     if (width == 100) {
-      
-      console.log("game over");
       clearInterval(id); 
     } else {
       io.to(rooms[i].name).emit('roomdata', rooms[i]);
