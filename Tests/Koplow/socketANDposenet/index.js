@@ -10,15 +10,17 @@ var room = function(name){
   this.players = [];
   this.player_positions = [];
 }
+
 for(let i = 1; i <= numRooms; i++){
   rooms.push(new room("Room "+i))
 }
 
 function weightedDistanceMatching(poseVector1, poseVector2) {
+  console.log(poseVector1);
   let vector1PoseXY = poseVector1.slice(0, 34);
   let vector1Confidences = poseVector1.slice(34, 51);
   let vector1ConfidenceSum = poseVector1.slice(51, 52);
-
+  
   let vector2PoseXY = poseVector2.slice(0, 34);
 
       // First summation
@@ -76,18 +78,19 @@ io.on('connection', (socket) => {
       function createArray(p){
         let posevector1 = []
         var summ = 0;
-        for (let i=0; i<playerRoom.player_positions[p].length; i++){
-          posevector1.push(playerRoom.player_positions[p][i].position.x);
-          posevector1.push(playerRoom.player_positions[p][i].position.y);
-        }
-        for (let i=0; i<playerRoom.player_positions[p].length; i++){
-          posevector1.push(playerRoom.player_positions[p][i].score);
-          summ+=playerRoom.player_positions[p][i].score;
+        
+        for (let i=0; i<playerRoom.player_positions[p].keypoints.length; i++){
+          posevector1.push(playerRoom.player_positions[p].keypoints[i].position.x);
+          posevector1.push(playerRoom.player_positions[p].keypoints[i].position.y);
+        } 
+        for (let i=0; i<playerRoom.player_positions[p].keypoints.length; i++){
+          posevector1.push(playerRoom.player_positions[p].keypoints[i].score);
+          summ+=playerRoom.player_positions[p].keypoints[i].score;
         }
         posevector1.push(summ);
         return posevector1;
       }
-      var compare = [50]*52;// CHANGE this to library of poses
+      var compare = Array.from(Array(52), () => 50)
       for (let i=0; i<playerRoom.player_positions.length; i++){
         let playerPose = createArray(i); 
         let score = weightedDistanceMatching(playerPose,compare); 
@@ -105,13 +108,27 @@ io.on('connection', (socket) => {
 
 });
 
-//Periodically send out all posenet locations
 for(let i = 0; i < numRooms; i++){
   setInterval(() => {
     io.to(rooms[i].name).emit('roomdata', rooms[i]);
   }, 10);
 }
+/*
+//Periodically send out all posenet locations
+for(let i = 0; i < numRooms; i++){
+  var elem = document.getElementById("myBar");
+  var width = 0;
+  var id = setInterval(posingtime, 100); 
+  function posingtime() {
+    if (width == 100) {
+      clearInterval(id); 
+    } else {
+      width++;
+      io.to(rooms[i].name).emit('roomdata', rooms[i]);
+    }
+  }
+*/
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+http.listen(5000, () => {
+  console.log('listening on *:5000');
 });
