@@ -1,3 +1,4 @@
+//server side
 var express = require('express')
 var app = express()
 var http = require('http').createServer(app);
@@ -27,11 +28,11 @@ io.on('connection', (socket) => {
       }
     }
     socket.join(playerRoom.name)
-
+      
     //add player to serverside registry 
     playerRoom.players.push(socket.id)
     playerRoom.player_positions.push(null)
-
+    
     console.log('a user connected to '+playerRoom.name+" which now has:");
     console.log(playerRoom.players)
 
@@ -43,6 +44,8 @@ io.on('connection', (socket) => {
         
         console.log('user disconnected from '+playerRoom.name+" which now has:");
         console.log(playerRoom.players)
+        
+        //this.io.emit('remove-user', socket.id);
     });
   
 
@@ -53,6 +56,24 @@ io.on('connection', (socket) => {
 
     socket.on('getroomname', () => {
       io.to(socket.id).emit('roomname', playerRoom.name);
+    });
+    socket.on('refresh', () => {
+      console.log('refreshing...')
+      io.sockets.emit('broadcast',{newplayer: socket.id, description: socket.id + ' client connected!', room: playerRoom.name, player: socket.id});
+      //io.to(playerRoom).emit('updateroom', playerRoom.name);
+    });
+    socket.on('make-offer', (data) => {
+      socket.to(data.to).emit('offer-made', {
+          offer: data.offer,
+          socket: socket.id
+      });
+    });
+
+    socket.on('make-answer', (data) => {
+        socket.to(data.to).emit('answer-made', {
+            socket: socket.id,
+            answer: data.answer
+        });
     });
 
 

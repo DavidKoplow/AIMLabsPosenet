@@ -46,8 +46,9 @@ function poseNet(sketch, socket){
             socket.emit('senduserpos', pose);
         }
         if(ROOM.player_positions){
-            for(let i =0; i < ROOM.player_positions.length; i+=1){
-                var p = ROOM.player_positions[i]
+            //for(let i =0; i < ROOM.player_positions.length; i+=1){
+                var ind = ROOM.players.indexOf(socket.id);
+                var p = ROOM.player_positions[ind];
 
                 if(p){
                     let eyeR = p.rightEye;
@@ -65,7 +66,7 @@ function poseNet(sketch, socket){
                         sketch.ellipse(x, y, 16, 16);
                     }
                 }
-            }
+            //}
 
         }
     }
