@@ -1,7 +1,5 @@
 
 function poseNet(sketch, socket){
-
-
     let video;
     let poseNet;
     let pose;

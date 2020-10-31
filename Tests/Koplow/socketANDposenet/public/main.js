@@ -16,12 +16,17 @@ function joinGame(){
     //create gameroom
     var element = document.getElementById("gameroom");
     var displayroom = document.createElement("h1");   
+    var winner = document.createElement("h1");   
 
     socket.emit('getroomname');
     socket.on('roomname', function(n){
         console.log(ROOM)
         displayroom.innerHTML = "Room: "+n;  
         element.appendChild(displayroom);
+    });
+    socket.on('winner', function(n1){
+        winner.innerHTML = "Winner: "+n1;  
+        element.appendChild(winner); 
     });
     
    

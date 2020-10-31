@@ -73,11 +73,10 @@ io.on('connection', (socket) => {
         console.log(playerRoom.players)
     });
   
-
+    var winner = 0;
     socket.on('senduserpos', (senduserpos) => {
       let idx = playerRoom.players.indexOf(socket.id);
       playerRoom.player_positions[idx]=senduserpos
-      var playerScores = []
       function createArray(p){
         let posevector1 = []
         var summ = 0;
@@ -92,8 +91,28 @@ io.on('connection', (socket) => {
         }
         posevector1.push(summ);
         return posevector1;
-      }
-      var compare = Array.from(Array(52), () => 50)
+      } 
+      var compare = [
+        310.19858393687684,    258.86038101136916,   350.37654357197687,
+        207.21863386695952,     265.5267868338856,   210.91621250493984,
+        396.66995705333665,    232.83750719597367,    205.5858092549246,
+        240.95349931531382,     525.7820497505396,   447.94866539624877,
+        132.91735697349222,     436.2560557205853,     643.420569868867,
+         583.7161812986382,     12.90129309034533,    569.6126060634272,
+         605.3867236185631,     575.2181294363296,     78.2689096769934,
+         567.7709094095787,     481.8122278948238,    575.0237657123967,
+         204.8157462628435,     578.1638416334813,    518.1952734772798,
+         504.8221739535202,    196.38186948308686,    550.3378812441102,
+         518.2974947472954,     557.9946899414062,   201.63538060763466,
+         548.7780363921526,    0.9986155033111572,    0.999546468257904,
+        0.9995778203010559,   0.47409936785697937,   0.8219367861747742,
+        0.9470928907394409,    0.6319031119346619, 0.023077920079231262,
+       0.01112033985555172,  0.002840963890776038, 0.003084269119426608,
+      0.002529897727072239, 0.0030958964489400387, 0.001918445690535009,
+      0.002215202199295163, 0.0036043543368577957, 0.001236633281223476,
+         5.927495871204883
+    ]
+    var playerScores = [];
       if (playerRoom.player_positions[0]!=null || playerRoom.player_positions[1]!=null){
         for (let i=0; i<playerRoom.player_positions.length; i++){
           let playerPose = createArray(i); 
@@ -101,6 +120,8 @@ io.on('connection', (socket) => {
           playerScores.push(score);
         }
         var winner = playerScores.indexOf(Math.min.apply(Math, playerScores));
+        io.to(socket.id).emit('winner', winner);
+      
         console.log(winner); 
       }
     });
@@ -111,27 +132,30 @@ io.on('connection', (socket) => {
 
 
 });
-
+/*
 for(let i = 0; i < numRooms; i++){
   setInterval(() => {
     io.to(rooms[i].name).emit('roomdata', rooms[i]);
   }, 10);
 }
-/*
+*/
 //Periodically send out all posenet locations
 for(let i = 0; i < numRooms; i++){
-  var elem = document.getElementById("myBar");
+  //var elem = document.getElementById("myBar");
   var width = 0;
-  var id = setInterval(posingtime, 100); 
+  var id = setInterval(posingtime, 20000); 
   function posingtime() {
     if (width == 100) {
+      io.to(rooms[i].name).emit('roomdata', rooms[i]);
+      console.log("game over");
       clearInterval(id); 
     } else {
       width++;
-      io.to(rooms[i].name).emit('roomdata', rooms[i]);
+      
     }
   }
-*/
+}
+
 
 http.listen(5000, () => {
   console.log('listening on *:5000');

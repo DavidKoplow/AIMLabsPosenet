@@ -8,7 +8,6 @@ function initClient(socket){
     socket.on('roomdata', function(r){
       ROOM=r;
     });
- 
 }
   
   
