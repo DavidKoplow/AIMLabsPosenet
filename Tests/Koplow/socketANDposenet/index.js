@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
         return posevector1;
       }
       var compare = Array.from(Array(52), () => 50)
-      if (playerRoom.player_positions[0]!=null || playerRoom.player_positions[0].keypoints.length!=0){
+      if (playerRoom.player_positions[0]!=null || playerRoom.player_positions[1]!=null){
         for (let i=0; i<playerRoom.player_positions.length; i++){
           let playerPose = createArray(i); 
           let score = weightedDistanceMatching(playerPose,compare); 
