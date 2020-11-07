@@ -28,6 +28,8 @@ function joinGame(){
         winner.innerHTML = "Winner: "+n1;  
         element.appendChild(winner); 
     });
-    
-   
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var img = document.getElementById("scream");
+  ctx.drawImage(img, 10, 10, 150, 180);
 }
