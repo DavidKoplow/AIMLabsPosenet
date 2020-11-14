@@ -34,7 +34,6 @@ function poseNet(sketch, socket){
         }
     }
     function weightedDistanceMatching(poseVector1, poseVector2) {
-  
         if (poseVector1==null || poseVector2==null){
           return 0;
         }
@@ -58,42 +57,23 @@ function poseNet(sketch, socket){
         return summation1 * summation2; 
     }
 
-    function createArray(pose){
+    function createArray(keypoints){
         let posevector1 = []
         var summ = 0;
         
-        for (let i=0; i<pose.keypoints.length; i++){ 
-          posevector1.push(pose.keypoints[i].position.x); 
-          posevector1.push(pose.keypoints[i].position.y);
+        for (let i=0; i<keypoints.length; i++){ 
+          posevector1.push(keypoints[i].position.x); 
+          posevector1.push(keypoints[i].position.y);
         } 
-        for (let i=0; i<pose.keypoints.length; i++){
-          posevector1.push(pose.keypoints[i].score);
-          summ+=pose.keypoints[i].score; 
+        for (let i=0; i<keypoints.length; i++){
+          posevector1.push(keypoints[i].score);
+          summ+=keypoints[i].score; 
         }
         posevector1.push(summ);
         return posevector1;
       } 
-      var compare = [
-        310.19858393687684,    258.86038101136916,   350.37654357197687,
-        207.21863386695952,     265.5267868338856,   210.91621250493984,
-        396.66995705333665,    232.83750719597367,    205.5858092549246,
-        240.95349931531382,     525.7820497505396,   447.94866539624877,
-        132.91735697349222,     436.2560557205853,     643.420569868867,
-         583.7161812986382,     12.90129309034533,    569.6126060634272,
-         605.3867236185631,     575.2181294363296,     78.2689096769934,
-         567.7709094095787,     481.8122278948238,    575.0237657123967,
-         204.8157462628435,     578.1638416334813,    518.1952734772798,
-         504.8221739535202,    196.38186948308686,    550.3378812441102,
-         518.2974947472954,     557.9946899414062,   201.63538060763466,
-         548.7780363921526,    0.9986155033111572,    0.999546468257904,
-        0.9995778203010559,   0.47409936785697937,   0.8219367861747742,
-        0.9470928907394409,    0.6319031119346619, 0.023077920079231262,
-       0.01112033985555172,  0.002840963890776038, 0.003084269119426608,
-      0.002529897727072239, 0.0030958964489400387, 0.001918445690535009,
-      0.002215202199295163, 0.0036043543368577957, 0.001236633281223476,
-         5.927495871204883
-    ] 
-    
+
+
     function modelLoaded() {
         console.log('poseNet ready');
     }
@@ -101,11 +81,12 @@ function poseNet(sketch, socket){
     sketch.draw = function() {
         sketch.image(video, 0, 0); 
         if (pose) {
-            let playerPose = createArray(pose);  
+            let playerPose = createArray(pose.keypoints);  
             let score = weightedDistanceMatching(playerPose,compare);  
-            socket.emit('senduserpos', score); 
+            socket.emit('senduserpos', [pose,score]); 
+           
         }
-        // calculate pose 
+        // calculate pose
         if(ROOM.player_positions){
             for(let i =0; i < ROOM.player_positions.length; i+=1){
                 var p = ROOM.player_positions[i]
@@ -128,6 +109,19 @@ function poseNet(sketch, socket){
             }
 
         }
+
+        if(HOLE){
+            compare = createArray(HOLE)
+
+            for(var i = 0; i < HOLE.length; i++){
+                let x = HOLE[i].position.x;
+                let y = HOLE[i].position.y;
+                sketch.fill(255, 255, 0);
+                sketch.ellipse(x, y, 16, 16);    
+            }
+        }
+
+
     }
 
 }

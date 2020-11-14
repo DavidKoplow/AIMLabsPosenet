@@ -6,7 +6,8 @@ function initClient(socket){
       return false;
     });
     socket.on('roomdata', function(r){
-      ROOM=r;
+      ROOM=r[0];
+      HOLE=r[1]
     });
 }
   

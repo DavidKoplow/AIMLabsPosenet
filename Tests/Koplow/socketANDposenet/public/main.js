@@ -1,4 +1,6 @@
 var ROOM = []
+var HOLE = []
+var compare = null
 function joinGame(){
 
     //Removes title screen
@@ -21,15 +23,15 @@ function joinGame(){
     socket.emit('getroomname');
     socket.on('roomname', function(n){
         console.log(ROOM)
-        displayroom.innerHTML = "Room: "+n;  
+        displayroom.innerHTML = n[0]+", Player "+n[1];  
         element.appendChild(displayroom);
     });
     socket.on('winner', function(n1){
         winner.innerHTML = "Winner: "+n1;  
         element.appendChild(winner); 
     });
-    var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
-    var img = document.getElementById("scream");
-  ctx.drawImage(img, 10, 10, 150, 180);
+    //var c = document.getElementById("myCanvas");
+    //var ctx = c.getContext("2d");
+    //var img = document.getElementById("scream");
+    //ctx.drawImage(img, 10, 10, 150, 180);
 }
