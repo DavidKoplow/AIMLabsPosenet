@@ -79,11 +79,12 @@ function poseNet(sketch, socket){
     //Draw dots at certian positions
     sketch.draw = function() {
         sketch.image(video, 0, 0); 
-        if (pose) {
+        if (pose && send) {
+            console.log(pose.keypoints);
             let playerPose = createArray(pose.keypoints);  
             let score = weightedDistanceMatching(playerPose,compare);  
             socket.emit('senduserpos', [pose,score]); 
-           
+            send=false;
         }
         // calculate pose
         if(ROOM.player_positions){
@@ -98,13 +99,26 @@ function poseNet(sketch, socket){
                     sketch.fill(0, 0, 255);
                     sketch.ellipse(p.rightWrist.x, p.rightWrist.y, 32);
                     sketch.ellipse(p.leftWrist.x, p.leftWrist.y, 32);
-                    for (let i = 0; i < p.keypoints.length; i++) {
-                        let x = p.keypoints[i].position.x;
-                        let y = p.keypoints[i].position.y;
-                        sketch.fill(0, 255, 0);
+                    sketch.fill(teamColors[i]);
+
+                    for (let j = 0; j < p.keypoints.length; j++) {
+                        let x = p.keypoints[j].position.x;
+                        let y = p.keypoints[j].position.y;
                         sketch.ellipse(x, y, 16, 16);
                     }
+     
+                
+                let skeleton = genskeleton(p.keypoints)
+                sketch.stroke(teamColors[i])
+                sketch.strokeWeight(5)
+            
+                for(let j = 0; j<skeleton.length;j++){
+                    pnts=skeleton[j][1]
+                    sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
                 }
+                sketch.noStroke()
+                sketch.strokeWeight(1)
+            }
             }
 
         }
@@ -118,9 +132,79 @@ function poseNet(sketch, socket){
                 sketch.fill(255, 255, 0);
                 sketch.ellipse(x, y, 16, 16);    
             }
+            let skeletonHOLE = genskeleton(HOLE)
+                sketch.stroke("#FFC0CB") 
+                sketch.strokeWeight(5)  
+            
+                for(let j = 0; j<skeletonHOLE.length;j++){
+                    pnts=skeletonHOLE[j][1]
+                    sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
+                } 
+                sketch.noStroke()
+                sketch.strokeWeight(1)
         }
 
 
     }
 
 }
+
+function genskeleton(keypoints){
+    skeleton=[]
+    thresh=0.1
+    for(var i = 0; i<keypoints.length; i++){
+        let p1 = keypoints[i]
+        if(p1.score>thresh){
+            for(var j = 0; j<keypoints.length; j++){
+                let p2=keypoints[j]
+                if(p2.score>thresh){
+
+                    switch(p1.part){
+
+                        case 'leftShoulder':
+                            if(p2.part=='rightShoulder' || p2.part=='leftElbow' || p2.part=='leftHip'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+
+                        case 'rightHip':
+                            if(p2.part=='leftHip' || p2.part=='rightShoulder' || p2.part=='rightHip'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+                        case 'leftKnee':
+                            if(p2.part=='leftAnkle' || p2.part=='leftHip'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+                        case 'rightElbow':
+                            if(p2.part=='rightShoulder' || p2.part=='rightWrist'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+
+                        case 'leftElbow':
+                            if(p2.part=='leftWrist'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+                        
+                        case 'rightAnkle':
+                            if(p2.part=='rightKnee'){
+                                skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
+                            }
+                        break;
+
+                        default:
+
+                        break;
+
+                    }
+
+                }
+            }   
+        }
+    }
+    return skeleton
+}
+

@@ -1,6 +1,11 @@
 var ROOM = []
 var HOLE = []
 var compare = null
+var send = true;
+var teamColors = ["#FF0000","#00FF00"]
+var pcolor = null;
+var player = 0;
+
 function joinGame(){
 
     //Removes title screen
@@ -23,7 +28,14 @@ function joinGame(){
     socket.emit('getroomname');
     socket.on('roomname', function(n){
         console.log(ROOM)
-        displayroom.innerHTML = n[0]+", Player "+n[1];  
+        player=n[1]-1
+        pcolor=teamColors[player]
+        let str = "Player "+n[1]
+        str = str.fontcolor(pcolor);
+
+        
+        displayroom.innerHTML = n[0]+", "+str;  
+        //displayroom.color = pcolor;
         element.appendChild(displayroom);
     });
     socket.on('winner', function(n1){

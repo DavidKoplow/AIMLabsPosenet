@@ -1,150 +1,34 @@
 <!doctype html>
 <html>
   <head>
-
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.1.9/lib/p5.min.js"></script>
+    <script src="https://unpkg.com/ml5@0.4.2/dist/ml5.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <meta charset="utf-8" />
     <title>Socket.IO chat</title>
-    
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
-  </head>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.1.9/lib/p5.min.js"></script>
-  <script src="https://unpkg.com/ml5@0.4.2/dist/ml5.min.js"></script>
-
-  <script>
-
-var socket = io();
-
-
-
-    let video;
-let poseNet;
-let pose;
-let skeleton;
-let positions=[];
-function setup() {
-  createCanvas(640, 480);
-  video = createCapture(VIDEO);
-  video.hide();
-  options = {
-  architecture: 'MobileNetV1',
-  imageScaleFactor: 0.1,
-  outputStride: 16,
-  flipHorizontal: false,
-  minConfidence: 0.5,
-  maxPoseDetections: 5,
-  scoreThreshold: 0.5,
-  nmsRadius: 20,
-  detectionType: 'multiple',
-  inputResolution: 257,
-  multiplier: 0.75,
-  quantBytes: 2,
-  }
-  poseNet = ml5.poseNet(video, options, modelLoaded);
-  poseNet.on('pose', gotPoses);
-}
-
-function gotPoses(poses) {
-  //console.log(poses);
-  if (poses.length > 0) {
-    pose = poses[0].pose;
-    skeleton = poses[0].skeleton;
-  }
-}
-
-function modelLoaded() {
-  console.log('poseNet ready');
-}
-
-function draw() {
-  image(video, 0, 0);
-  if (pose) {
-    socket.emit('pos', pose);
-  }
-  for(let i =0; i < positions.length; i+=1){
-    var p = positions[i]
-
-    if(p){
-      let eyeR = p.rightEye;
-    let eyeL = p.leftEye;
-    let d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
-    fill(255, 0, 0);
-    ellipse(p.nose.x, p.nose.y, d);
-    fill(0, 0, 255);
-    ellipse(p.rightWrist.x, p.rightWrist.y, 32);
-    ellipse(p.leftWrist.x, p.leftWrist.y, 32);
-
-    for (let i = 0; i < p.keypoints.length; i++) {
-      let x = p.keypoints[i].position.x;
-      let y = p.keypoints[i].position.y;
-      fill(0, 255, 0);
-      ellipse(x, y, 16, 16);
-    }
-    }
-  
-
-
-/*    for (let i = 0; i < skeleton.length; i++) {
-      let a = skeleton[i][0];
-      let b = skeleton[i][1];
-      strokeWeight(2);
-      stroke(255);
-      line(a.position.x, a.position.y, b.position.x, b.position.y);
-    }
-*/
-  }
-
-
-//    socket.emit('chat message', pose);
+ 
+  </head> 
 
   
+  <script type="text/javascript" src="poses.js"></script>
+  <script type="text/javascript" src="client.js"></script>
+  <script type="text/javascript" src="posenet.js"></script>
+  <script type="text/javascript" src="main.js"></script>
   
-}
 
-
-
-
-
-$(function () {
-
-      $('form').submit(function(e) {
-        e.preventDefault(); // prevents page reloading
-        socket.emit('chat message', $('#m').val());
-        console.log(socket.id)
-
-        $('#m').val('');
-        return false;
-      });
-      socket.on('positions', function(player_positions){
-        positions=player_positions;
-      });
-    //  socket.on('chat message', function(msg){
-  //    $('#messages').append($('<li>').text(msg));
-    //});
-
-
-  });
-
-
-
-
-
-
-
-
-  </script>
   <body>
+    <div id="titlescreen">
+      <h1>Welcome to Pose Player</h1>
+      <button type="button" onclick="joinGame()">Press to Join a Game</button>
+    </div>
+
+    <div id="gameroom">
+
+    </div>
+
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
