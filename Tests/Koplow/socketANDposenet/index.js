@@ -60,22 +60,24 @@ io.on('connection', (socket) => {
       playerRoom.player_positions[idx]=senduserpos[0]
       playerRoom.player_scores[idx]=senduserpos[1] 
 
-    if (playerRoom.player_scores.length==2){
-     if (playerRoom.player_scores[0]!=null && playerRoom.player_scores[1]!=null){
-      playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
-
-        io.to(socket.id).emit('winner', playerRoom.winner);
-        
-        //console.log(winner); 
-     }
-    }
-    if (playerRoom.player_scores.length==1){
-      if (playerRoom.player_scores[0]!=null){
+      if (playerRoom.player_scores.length==2){
+      if (playerRoom.player_scores[0]!=null && playerRoom.player_scores[1]!=null){
         playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
-        io.to(socket.id).emit('winner', playerRoom.winner);
-        //console.log(winner); 
-     }
-    }
+
+          io.to(socket.id).emit('winner', playerRoom.winner);
+          
+          //console.log(winner); 
+      }
+      }
+      if (playerRoom.player_scores.length==1){
+        if (playerRoom.player_scores[0]!=null){
+          playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
+          io.to(socket.id).emit('winner', playerRoom.winner);
+          //console.log(winner); 
+      }
+      }
+      io.to(socket.id).emit('posrecived', true)
+
     });
 
     socket.on('getroomname', () => {

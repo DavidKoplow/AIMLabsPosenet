@@ -1,6 +1,8 @@
 var ROOM = []
 var HOLE = []
 var compare = null
+var send = true;
+
 function joinGame(){
 
     //Removes title screen

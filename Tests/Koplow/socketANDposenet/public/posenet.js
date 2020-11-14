@@ -80,11 +80,11 @@ function poseNet(sketch, socket){
     //Draw dots at certian positions
     sketch.draw = function() {
         sketch.image(video, 0, 0); 
-        if (pose) {
+        if (pose && send) {
             let playerPose = createArray(pose.keypoints);  
             let score = weightedDistanceMatching(playerPose,compare);  
             socket.emit('senduserpos', [pose,score]); 
-           
+            send=false;
         }
         // calculate pose
         if(ROOM.player_positions){

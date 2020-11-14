@@ -9,6 +9,9 @@ function initClient(socket){
       ROOM=r[0];
       HOLE=r[1]
     });
+    socket.on('posrecived',function(b){
+      send=b
+    })
 }
   
   
