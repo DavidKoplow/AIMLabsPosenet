@@ -22,6 +22,22 @@ function joinGame(){
 
     //create gameroom
     var element = document.getElementById("gameroom");
+
+
+    var readyCheck = document.createElement("input");  
+    readyCheck.type="checkbox"
+    readyCheck.id="readyCheck"
+    readyCheck.onclick=function(){
+        ready()
+    }
+    element.appendChild(readyCheck); 
+
+    function ready(){
+          console.log("ready")
+          socket.emit('ready');
+
+      } 
+
     var displayroom = document.createElement("h1");   
     var winner = document.createElement("h1");   
 
@@ -42,6 +58,9 @@ function joinGame(){
         winner.innerHTML = "Winner: "+n1;  
         element.appendChild(winner); 
     });
+
+
+
     //var c = document.getElementById("myCanvas");
     //var ctx = c.getContext("2d");
     //var img = document.getElementById("scream");

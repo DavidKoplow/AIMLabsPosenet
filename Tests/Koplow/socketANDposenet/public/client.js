@@ -12,6 +12,10 @@ function initClient(socket){
     socket.on('posrecived',function(b){
       send=b
     })
+    socket.on('resetButton', function(r){
+      var readyCheck = document.getElementById("readyCheck");
+      readyCheck.checked=false;
+    });
 }
   
   
