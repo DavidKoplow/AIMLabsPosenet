@@ -1,5 +1,5 @@
 
-  var hole=[
+  var hole1=[
     {
       score: 0.997854471206665,
       part: 'nose',

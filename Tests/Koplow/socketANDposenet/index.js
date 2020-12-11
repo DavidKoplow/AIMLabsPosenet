@@ -1,4 +1,5 @@
-var express = require('express')
+var express = require('express');
+const { endianness } = require('os');
 var app = express()
 var ws = require('ws') 
 var http = require('http').createServer(app);
@@ -12,6 +13,8 @@ var room = function(name){
   this.player_positions = [];
   this.player_scores = [];
   this.winner = null
+  this.ready = [false,false]
+  this.running = false
 }
 
 var hole=generateRandPos()
@@ -34,7 +37,7 @@ io.on('connection', (socket) => {
       }
     }
     socket.join(playerRoom.name)
-
+    
     //add player to serverside registry 
     playerRoom.players.push(socket.id)
     playerRoom.player_positions.push(null)
@@ -49,43 +52,33 @@ io.on('connection', (socket) => {
         playerRoom.players.splice(idx, 1);
         playerRoom.player_positions.splice(idx, 1);
         playerRoom.player_scores.splice(idx, 1);
+        playerRoom.ready[idx]=false;
         
         console.log('user disconnected from '+playerRoom.name+" which now has:");
         console.log(playerRoom.players)
     });
   
+    socket.on('ready', (senduserpos) => {
+      let idx = playerRoom.players.indexOf(socket.id);
+      playerRoom.ready[idx]=true;
+    }); 
+
+
     var winner = 0;
+    io.to(socket.id).emit('roomname', [playerRoom.name,playerRoom.players.indexOf(socket.id)+1]);
+    io.to(socket.id).emit('winner', " ");
     socket.on('senduserpos', (senduserpos) => {
       let idx = playerRoom.players.indexOf(socket.id);
-      console.log(senduserpos[0].keypoints);
       playerRoom.player_positions[idx]=senduserpos[0]
       playerRoom.player_scores[idx]=senduserpos[1] 
-
-      if (playerRoom.player_scores.length==2){
-      if (playerRoom.player_scores[0]!=null && playerRoom.player_scores[1]!=null){
-        playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
-
-          io.to(socket.id).emit('winner', playerRoom.winner);
-          
-          //console.log(winner); 
-      }
-      }
-      if (playerRoom.player_scores.length==1){
-        if (playerRoom.player_scores[0]!=null){
-          playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
-          io.to(socket.id).emit('winner', playerRoom.winner);
-          //console.log(winner); 
-      }
-      }
-      io.to(socket.id).emit('posrecived', true)
-
+        if (playerRoom.player_scores.length==2 && playerRoom.running){
+          if (playerRoom.player_scores[0]!=null && playerRoom.player_scores[1]!=null ){
+            playerRoom.winner = playerRoom.player_scores.indexOf(Math.min.apply(Math, playerRoom.player_scores))+1;
+              io.to(socket.id).emit('winner', playerRoom.winner);
+          }
+        }
+        io.to(socket.id).emit('posrecived', true)
     });
-
-    socket.on('getroomname', () => {
-      io.to(socket.id).emit('roomname', [playerRoom.name,playerRoom.players.indexOf(socket.id)+1]);
-    });
-
-
 });
 
 function generateRandPos(){
@@ -465,13 +458,41 @@ for(let i = 0; i < numRooms; i++){
 for(let i = 0; i < numRooms; i++){
   //var elem = document.getElementById("myBar");
   //var id = setTimeout(posingtime, 10);  
-  var roomloop = setInterval(posingtime, 10);
-  
-  function posingtime() {
-    io.to(rooms[i].name).emit('roomdata', [rooms[i],hole]);
+  rooms[i].running = false;
+  var roomloop;
+
+  var updateloop = setInterval(updates, 100);
+
+  function updates(){
+    if(rooms[i].ready[0]==true && rooms[i].ready[1]==true){
+      startGame();
+    }
+  }
+  function startGame(){
+    if(rooms[i].running==false){
+      rooms[i].running=true;
+      console.log("starting")
+      roomloop = setInterval(posingtime, 10);
+    }
   }
 
+  count=0
+  function posingtime() {
+    console.log("hello");
+    io.to(rooms[i].name).emit('roomdata', [rooms[i],hole]);
+    if(count>500){
+      count=0;
+      clearInterval(roomloop); 
+      end()
+    }
+    count++;
+  }
 
+  function end() {
+    io.to(rooms[i].name).emit('resetButton')
+    rooms[i].ready=[false,false]
+    rooms[i].running = false;
+  }
   
 }
 

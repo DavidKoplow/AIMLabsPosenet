@@ -1,10 +1,36 @@
 * { 
-    margin: 0; 
-    padding: 0; 
     box-sizing: border-box; 
 }
 body { 
-    font: 13px Helvetica, Arial; 
+    font: 18px Helvetica, Arial; 
+}
+canvas {
+    display: block;
+}
+#welcomeInstruction{
+    display: inline-block;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#defaultCanvas0  {
+    position: fixed;
+    top: 100px;
+    left: 60px;
+}
+#defaultCanvas1  {
+    position: fixed;
+    top: 100px;
+    left: 600px;
+}
+#winner{
+    display: inline-block;
+    position: fixed;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 form { 
     background: #000; 
@@ -35,4 +61,45 @@ form button {
 }
 #messages li:nth-child(odd) { 
     background: #eee; 
+}
+
+#titlescreen{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+button {
+    display: block;
+    margin: auto;
+    background: rgb(255, 200, 50);
+    padding: 0.5em;
+    width: 60%;
+    border-width: 0;
+    outline:none;
+    border-radius: 100px;
+    transition-duration: 0.4s;
+}
+button:hover{
+    background: rgb(255, 228, 78);
+
+}
+
+#readyCheck {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    position: fixed;
+    top: 15%;
+    left: 63%;
+    transform: translate(-50%, -50%);
+}
+#rmessage {
+    font-size: 1.5em;
+    display: inline-block;
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
 }

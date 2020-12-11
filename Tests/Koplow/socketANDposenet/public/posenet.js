@@ -1,11 +1,42 @@
+function drawReference(sketch,socket){
+
+    sketch.setup = function() {
+        sketch.createCanvas(400, 400);
+        sketch.line(0,4,5,1);
+    };
+    /*
+    if (HOLE){
+        for(var i = 0; i < HOLE.length; i++){
+            let x = HOLE[i].position.x;
+            let y = HOLE[i].position.y;
+            sketch.fill(255, 255, 0);
+            sketch.ellipse(x, y, 16, 16);    
+        }
+        
+        let skeletonHOLE = genskeleton(HOLE)
+            
+            sketch.stroke(teamColors[i]) 
+            sketch.strokeWeight(5)  
+        
+            for(let j = 0; j<skeletonHOLE.length;j++){
+                pnts=skeletonHOLE[j][1]
+                sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
+            } 
+            sketch.noStroke()
+            sketch.strokeWeight(1) 
+        }
+        */
+
+}
 function poseNet(sketch, socket){
     let video;
     let poseNet;
     let pose;
     let skeleton;
     sketch.setup = function() {
-        sketch.createCanvas(640, 480);
+        sketch.createCanvas(450, 550);
         video = sketch.createCapture(sketch.VIDEO);
+        video.size(450, 550);
         video.hide();
         options = {
             architecture: 'MobileNetV1',
@@ -47,8 +78,8 @@ function poseNet(sketch, socket){
       
             // Second summation
         let summation2 = 0;
-        for (let i = 0; i < vector1PoseXY.length; i++) {
-          let tempConf = Math.floor(i / 2);
+        for (let i = 0; i < vector1PoseXY.length; i++) { 
+          let tempConf = Math.floor(i / 2); 
           let tempSum = vector1Confidences[tempConf] * Math.abs(vector1PoseXY[i] - vector2PoseXY[i]);
           summation2 = summation2 + tempSum;
         }
@@ -94,6 +125,7 @@ function poseNet(sketch, socket){
                     let eyeR = p.rightEye;
                     let eyeL = p.leftEye;
                     let d = sketch.dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+                    
                     sketch.fill(255, 0, 0);
                     sketch.ellipse(p.nose.x, p.nose.y, d);
                     sketch.fill(0, 0, 255);
@@ -125,30 +157,10 @@ function poseNet(sketch, socket){
 
         if(HOLE){
             compare = createArray(HOLE)
-
-            for(var i = 0; i < HOLE.length; i++){
-                let x = HOLE[i].position.x;
-                let y = HOLE[i].position.y;
-                sketch.fill(255, 255, 0);
-                sketch.ellipse(x, y, 16, 16);    
-            }
-            let skeletonHOLE = genskeleton(HOLE)
-                sketch.stroke("#FFC0CB") 
-                sketch.strokeWeight(5)  
-            
-                for(let j = 0; j<skeletonHOLE.length;j++){
-                    pnts=skeletonHOLE[j][1]
-                    sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
-                } 
-                sketch.noStroke()
-                sketch.strokeWeight(1)
-        }
-
-
     }
 
 }
-
+}
 function genskeleton(keypoints){
     skeleton=[]
     thresh=0.1
