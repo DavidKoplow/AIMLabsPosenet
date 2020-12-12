@@ -3,6 +3,7 @@
 }
 body { 
     font: 18px Helvetica, Arial; 
+    color: white;
 }
 canvas {
     display: block;
@@ -17,10 +18,37 @@ canvas {
 }
 #allwinners{
     display: inline-block;
+    background-color: yellow;
     position: fixed;
-    width: 11%;
+    width: 12%;
     top: 5%;
     left: 80%;
+    transform: translate(-50%, -50%);
+}
+#ok{
+    display: inline-block;
+    position: fixed;
+    width:10%;
+    top: 77%;
+    left: 50%;
+    color: white;
+    background-color: blue;
+    transform: translate(-50%, -50%);
+}
+#gameInstructions{
+    display: inline-block;
+    position: fixed;
+    font-size: 13;
+    width:45%;
+    top: 50%;
+    left: 50%;
+    color:black;
+    border:3px; 
+    border-style:solid; 
+    text-align: center;
+    border-color:black; 
+    padding: 1em;
+    background-color: palegoldenrod;
     transform: translate(-50%, -50%);
 }
 #endgame{
@@ -58,7 +86,7 @@ form {
 }
 form input { 
     border: 0; 
-    padding: 10px; 
+    padding: 30px; 
     width: 90%; 
     margin-right: 0.5%; 
 }
@@ -107,9 +135,10 @@ button:hover{
     width: 2em;
     height: 2em;
     position: fixed;
-    top: 15%;
-    left: 63%;
+    top: 20%;
+    left: 50%;
     transform: translate(-50%, -50%);
+    color: yellowgreen;
 }
 #rmessage {
     font-size: 1.5em;

@@ -481,7 +481,7 @@ for(let i = 0; i < numRooms; i++){
 
   count=0
   function posingtime() {
-    console.log("hello");
+    
     io.to(rooms[i].name).emit('roomdata', [rooms[i],hole]);
     if(count>500){
       count=0;

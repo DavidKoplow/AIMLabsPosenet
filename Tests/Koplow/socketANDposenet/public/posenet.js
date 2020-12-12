@@ -111,7 +111,7 @@ function poseNet(sketch, socket){
     sketch.draw = function() {
         sketch.image(video, 0, 0); 
         if (pose && send) {
-            console.log(pose.keypoints);
+        
             let playerPose = createArray(pose.keypoints);  
             let score = weightedDistanceMatching(playerPose,compare);  
             socket.emit('senduserpos', [pose,score]); 
