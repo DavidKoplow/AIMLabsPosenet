@@ -137,25 +137,25 @@ button:hover{
     width: 2em;
     height: 2em;
     position: fixed;
-    top: 45%;
-    left: 50%;
+    top: 35%;
+    left: 49%;
     transform: translate(-50%, -50%);
-    background-color: yellowgreen;
+    background-color: white;
 }
 #box{
     position: fixed;
     width: 220px;
-    height: 80px;
-    top: 18%;
+    height: 85px;
+    top: 17%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color:lightgreen;
+    background-color:white;
 }
 #rmessage {
     font-size: 10;
     display: inline-block;
     position: fixed;
-    top: 18%;
+    top: 17%;
     left: 50%;
     background-color:white;
     transform: translate(-50%, -50%);

@@ -6,7 +6,7 @@ var teamColors = ["#FF0000","#00FF00"]
 var pcolor = null;
 var player = 0;
 var winners = {};
-var count =1;
+var count =0;
 var end = false;
 var started = false;
 function joinGame(){
@@ -65,6 +65,7 @@ function joinGame(){
         rmessage.style.visibility = "visible";
         box.style.visibility="visible";
         started = true;
+        count=1;
     }
 
     element.appendChild(welcomeInstruction);
@@ -78,6 +79,7 @@ function joinGame(){
     readyCheck.id="readyCheck"
     readyCheck.style="margin-top: 40px;"
     readyCheck.onclick=function(){
+        
         ready()
         if (end){
             allWinners.innerHTML = ""
@@ -94,7 +96,7 @@ function joinGame(){
             var listWinners = "<b>Leader Board</b> <br />"
             for(var key in winners){
                 listWinners+="Round " + key + ": Player " + winners[key] + "<br />" 
-                
+            
             }
             allWinners.innerHTML = listWinners
             element.appendChild(allWinners);
@@ -103,10 +105,13 @@ function joinGame(){
             end = true;
 
         }
+        count+=1
+        
     }
     rmessage.appendChild(readyCheck); 
 
     function ready(){
+          
           console.log("ready")
           socket.emit('ready');
         
