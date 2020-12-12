@@ -10,7 +10,24 @@ canvas {
 #welcomeInstruction{
     display: inline-block;
     position: fixed;
+    
     top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#allwinners{
+    display: inline-block;
+    position: fixed;
+    width: 11%;
+    top: 5%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+}
+#endgame{
+    display: inline-block;
+    position: fixed;
+    width: 20%;
+    top: 90%;
     left: 50%;
     transform: translate(-50%, -50%);
 }

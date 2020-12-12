@@ -5,7 +5,8 @@ var send = true;
 var teamColors = ["#FF0000","#00FF00"]
 var pcolor = null;
 var player = 0;
-
+var winners = {};
+var count =0;
 function joinGame(){
 
     //Removes title screen
@@ -27,6 +28,7 @@ function joinGame(){
     //create gameroom
     var element = document.getElementById("gameroom");
     element.innerHTML = `<div id="rmessage">Press When Ready: </div>`;
+    
 
     var readyCheck = document.createElement("input");  
     var welcomeInstruction = document.createElement("h1"); 
@@ -38,12 +40,30 @@ function joinGame(){
     readyCheck.id="readyCheck"
     readyCheck.onclick=function(){
         ready()
+        var endGame = document.createElement("BUTTON");
+        endGame.innerHTML = "End Game"
+        endGame.id = "endgame"
+        element.appendChild(endGame);
+        endGame.onclick = function(){
+            var allWinners = document.createElement("p");
+            allWinners.id = "allwinners"
+            var listWinners = ""
+            for(var key in winners){
+                listWinners+="Round " + key + ": Player " + winners[key] + "\n"
+            }
+            allWinners.innerHTML = listWinners
+            element.appendChild(allWinners);
+            count=0
+            winners = {}
+
+        }
     }
     element.appendChild(readyCheck); 
 
     function ready(){
           console.log("ready")
           socket.emit('ready');
+          count+=1;
 
       } 
 
@@ -66,7 +86,11 @@ function joinGame(){
     socket.on('winner', function(n1){
         winner.innerHTML = "Player " + n1 + " Won!";  
         element.appendChild(winner); 
+        winners[count]=n1;
+        
     });
+
+   
 
     //var c = document.getElementById("myCanvas");
     //var ctx = c.getContext("2d");
