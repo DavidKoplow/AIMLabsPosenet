@@ -1,31 +1,5 @@
 function drawReference(sketch,socket){
 
-    sketch.setup = function() {
-        sketch.createCanvas(400, 400);
-        sketch.line(0,4,5,1);
-    };
-    /*
-    if (HOLE){
-        for(var i = 0; i < HOLE.length; i++){
-            let x = HOLE[i].position.x;
-            let y = HOLE[i].position.y;
-            sketch.fill(255, 255, 0);
-            sketch.ellipse(x, y, 16, 16);    
-        }
-        
-        let skeletonHOLE = genskeleton(HOLE)
-            
-            sketch.stroke(teamColors[i]) 
-            sketch.strokeWeight(5)  
-        
-            for(let j = 0; j<skeletonHOLE.length;j++){
-                pnts=skeletonHOLE[j][1]
-                sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
-            } 
-            sketch.noStroke()
-            sketch.strokeWeight(1) 
-        }
-        */
 
 }
 function poseNet(sketch, socket){
@@ -33,10 +7,12 @@ function poseNet(sketch, socket){
     let poseNet;
     let pose;
     let skeleton;
+    let swidth = 640;
     sketch.setup = function() {
-        sketch.createCanvas(450, 550);
+        let cnv = sketch.createCanvas(1280, 480);
+        cnv.position(50,200);
         video = sketch.createCapture(sketch.VIDEO);
-        video.size(450, 550);
+        video.size(640, 480);
         video.hide();
         options = {
             architecture: 'MobileNetV1',
@@ -117,26 +93,33 @@ function poseNet(sketch, socket){
             socket.emit('senduserpos', [pose,score]); 
             send=false;
         }
+        sketch.fill(200,200,200)
+        sketch.rect(swidth,0,swidth,480)
         // calculate pose
         if(ROOM.player_positions){
             for(let i =0; i < ROOM.player_positions.length; i+=1){
                 var p = ROOM.player_positions[i]
                 if(p){
+                    let offset = 0
+                    if(ROOM.players[i]!=socket.id){
+                        offset=swidth
+                    }
+
                     let eyeR = p.rightEye;
                     let eyeL = p.leftEye;
-                    let d = sketch.dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+                    let d = sketch.dist(eyeR.x+offset, eyeR.y, eyeL.x+offset, eyeL.y);
                     
                     sketch.fill(255, 0, 0);
-                    sketch.ellipse(p.nose.x, p.nose.y, d);
+                    sketch.ellipse(p.nose.x+offset, p.nose.y, d);
                     sketch.fill(0, 0, 255);
-                    sketch.ellipse(p.rightWrist.x, p.rightWrist.y, 32);
-                    sketch.ellipse(p.leftWrist.x, p.leftWrist.y, 32);
+                    sketch.ellipse(p.rightWrist.x+offset, p.rightWrist.y, 32);
+                    sketch.ellipse(p.leftWrist.x+offset, p.leftWrist.y, 32);
                     sketch.fill(teamColors[i]);
 
                     for (let j = 0; j < p.keypoints.length; j++) {
                         let x = p.keypoints[j].position.x;
                         let y = p.keypoints[j].position.y;
-                        sketch.ellipse(x, y, 16, 16);
+                        sketch.ellipse(x+offset, y, 16, 16);
                     }
      
                 
@@ -146,7 +129,7 @@ function poseNet(sketch, socket){
             
                 for(let j = 0; j<skeleton.length;j++){
                     pnts=skeleton[j][1]
-                    sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
+                    sketch.line(pnts[0]+offset,pnts[1],pnts[2]+offset,pnts[3])
                 }
                 sketch.noStroke()
                 sketch.strokeWeight(1)
@@ -157,7 +140,29 @@ function poseNet(sketch, socket){
 
         if(HOLE){
             compare = createArray(HOLE)
-    }
+
+            for(var i = 0; i < HOLE.length; i++){
+                let x = HOLE[i].position.x;
+                let y = HOLE[i].position.y;
+                sketch.fill(255, 255, 0);
+                sketch.ellipse(x, y, 16, 16);    
+                sketch.ellipse(x+swidth, y, 16, 16);    
+
+            }
+
+            let skeleton = genskeleton(HOLE)
+            sketch.stroke(255,255,0)
+            sketch.strokeWeight(5)
+        
+            for(let j = 0; j<skeleton.length;j++){
+                pnts=skeleton[j][1]
+                sketch.line(pnts[0],pnts[1],pnts[2],pnts[3])
+                sketch.line(pnts[0]+swidth,pnts[1],pnts[2]+swidth,pnts[3])
+
+            }
+            sketch.noStroke()
+            sketch.strokeWeight(1)
+        }
 
 }
 }
@@ -180,7 +185,7 @@ function genskeleton(keypoints){
                         break;
 
                         case 'rightHip':
-                            if(p2.part=='leftHip' || p2.part=='rightShoulder' || p2.part=='rightHip'){
+                            if(p2.part=='leftHip' || p2.part=='rightShoulder' || p2.part=='rightKnee'){
                                 skeleton.push(["",[p1.position.x,p1.position.y,p2.position.x,p2.position.y]])
                             }
                         break;

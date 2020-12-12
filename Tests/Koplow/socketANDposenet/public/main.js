@@ -28,14 +28,9 @@ function joinGame(){
     var element = document.getElementById("gameroom");
     
 
-    
+ 
 
-
-        
-    
-    
-    
-    element.innerHTML = `<div id="rmessage" style="font-size:10px">Press When Ready</div>`;
+   // element.innerHTML = `<div id="rmessage" style="background-color: #FFFFFF; padding: 20px; color: #000000; font-size:10px">Press When Ready</div>`;
 
     var readyCheck = document.createElement("input");  
     var welcomeInstruction = document.createElement("h1"); 
@@ -55,21 +50,30 @@ function joinGame(){
         gameInstructions.style.visibility = "hidden";
         function pN(sketch){poseNet(sketch,socket);} 
         var runPosenet = new p5(pN); //Creates p5 canvas & runs posenet on camera input
-        function reference(sketch){drawReference(sketch,socket);}
-        var myp5 = new p5(reference); 
+        rmessage.style.visibility = "visible";
         started = true;
     }
 
     element.appendChild(welcomeInstruction);
     var allWinners = document.createElement("p");
+
+    var rmessage = document.createElement("div");  
+    rmessage.style="background-color: #FFFFFF; padding: 20px; color: #000000; font-size:10px; position: absolute; top: 430px; left: 690px; z-index: 1000"
+    rmessage.id = "rmessage"
+    rmessage.style.visibility = "hidden";
+    rmessage.innerHTML="Press When Ready"
+    element.appendChild(rmessage);
+
     readyCheck.type="radio" 
     readyCheck.id="readyCheck"
+    readyCheck.style="margin-top: 40px;"
     readyCheck.onclick=function(){
         ready()
         if (end){
             allWinners.innerHTML = ""
             end= false;
         }
+        
         var endGame = document.createElement("BUTTON");
         endGame.innerHTML = "End Game"
         endGame.id = "endgame"
@@ -90,7 +94,7 @@ function joinGame(){
 
         }
     }
-    element.appendChild(readyCheck); 
+    rmessage.appendChild(readyCheck); 
 
     function ready(){
           console.log("ready")
@@ -106,7 +110,6 @@ function joinGame(){
 
     socket.emit('getroomname');
     socket.on('roomname', function(n){
-        console.log(ROOM)
         player=n[1]-1
         pcolor=teamColors[player]
         let str = "You are Player "+n[1] 
@@ -122,6 +125,11 @@ function joinGame(){
             winners[count]=n1;
         }
     });
+
+    var Time = document.createElement("h1");  
+    Time.id = "time";  
+    Time.innerHTML = "Time: 0";  
+    element.appendChild(Time)
 
    
 

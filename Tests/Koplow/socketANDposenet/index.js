@@ -15,10 +15,10 @@ var room = function(name){
   this.winner = null
   this.ready = [false,false]
   this.running = false
+  this.hole = []
 
 }
 
-var hole=generateRandPos()
 
 
 for(let i = 1; i <= numRooms; i++){
@@ -84,369 +84,162 @@ io.on('connection', (socket) => {
     });
 });
 
+
 function generateRandPos(){
   //generate random position
+  let width = 640;
+  let height = 480;
+  function sin(a){return Math.sin(-a);}
+  function cos(a){return Math.cos(-a);}
+  function rand(){return Math.random();}
+  let pi = Math.PI;
+  let scale = 0.9+0.4*rand();
+  let cTS = (130-rand()*20)*scale;
+  let cLS = (180-rand()*40)*scale;
+  let cBS = (110-rand()*30)*scale;
+  let theta = pi/3+pi*rand()/3; //rotation 
+  let phi = theta-pi/2
 
-  var hole1=[ 
-    {
-      score: 0.997854471206665,
-      part: 'nose',
-      position: { x: 273.30447660809824, y: 218.66378012334326 }
-    },
-    {
-      score: 0.9995414614677429,
-      part: 'leftEye',
-      position: { x: 296.14995459174366, y: 198.94808912091685 }
-    },
-    {
-      score: 0.9904188513755798,
-      part: 'rightEye',
-      position: { x: 265.5430537717352, y: 201.28500511674105 }
-    },
-    {
-      score: 0.9351797103881836,
-      part: 'leftEar',
-      position: { x: 337.0180668812318, y: 218.31939816011067 }
-    },
-    {
-      score: 0.07328098267316818,
-      part: 'rightEar',
-      position: { x: 254.42494076977445, y: 213.22769818138983 }
-    },
-    {
-      score: 0.9926152229309082,
-      part: 'leftShoulder',
-      position: { x: 398.32964247766637, y: 339.4576112027298 }
-    },
-    {
-      score: 0.965318500995636,
-      part: 'rightShoulder',
-      position: { x: 211.50804690349892, y: 339.1268861525717 }
-    },
-    {
-      score: 0.9304927587509155,
-      part: 'leftElbow',
-      position: { x: 542.4161110963339, y: 427.8702577821012 }
-    },
-    {
-      score: 0.624074399471283,
-      part: 'rightElbow',
-      position: { x: 51.18601520701605, y: 394.3691307097558 }
-    },
-    {
-      score: 0.8505564332008362,
-      part: 'leftWrist',
-      position: { x: 501.78288916205616, y: 233.40952535547638 }
-    },
-    {
-      score: 0.6258065104484558,
-      part: 'rightWrist',
-      position: { x: 71.67409577722215, y: 217.41270072729208 }
-    },
-    {
-      score: 0.0748775377869606,
-      part: 'leftHip',
-      position: { x: 385.07964969145183, y: 552.1364537101775 }
-    },
-    {
-      score: 0.18049569427967072,
-      part: 'rightHip',
-      position: { x: 230.32427004803017, y: 561.6955545625798 }
-    },
-    {
-      score: 0.010634002275764942,
-      part: 'leftKnee',
-      position: { x: 397.9059980444407, y: 523.032170158416 }
-    },
-    {
-      score: 0.014222485944628716,
-      part: 'rightKnee',
-      position: { x: 190.44461558301163, y: 552.1907999357825 }
-    },
-    {
-      score: 0.01490487065166235,
-      part: 'leftAnkle',
-      position: { x: 392.64645943845755, y: 555.1041551879408 }
-    },
-    {
-      score: 0.006625391077250242,
-      part: 'rightAnkle',
-      position: { x: 195.3563028179718, y: 565.295788360477 }
-    }
-  ]
-  var hole2 = [
-    {
-      score: 0.9791821837425232,
-      part: 'nose',
-      position: { x: 212.4483884818823, y: 35.82077115426267 }
-    },
-    {
-      score: 0.9726691246032715,
-      part: 'leftEye',
-      position: { x: 255.87725331347278, y: 3.1937927958566377 }
-    },
-    {
-      score: 0.9633320569992065,
-      part: 'rightEye',
-      position: { x: 159.8998582223974, y: -12.985531105605546 }
-    },
-    {
-      score: 0.3469149172306061,
-      part: 'leftEar',
-      position: { x: 301.48379789716074, y: 31.06072036208809 }
-    },
-    {
-      score: 0.7595075368881226,
-      part: 'rightEar',
-      position: { x: 69.11403433358159, y: 21.612611763208292 }
-    },
-    {
-      score: 0.8845362067222595,
-      part: 'leftShoulder',
-      position: { x: 398.62149843446014, y: 303.7609186432241 }
-    },
-    {
-      score: 0.3245816230773926,
-      part: 'rightShoulder',
-      position: { x: -30.453134974616976, y: 279.8639690829622 }
-    },
-    {
-      score: 0.16367529332637787,
-      part: 'leftElbow',
-      position: { x: 549.4917148931481, y: 550.0426687990181 }
-    },
-    {
-      score: 0.005642721429467201,
-      part: 'rightElbow',
-      position: { x: -12.679078810873662, y: 564.7868697467018 }
-    },
-    {
-      score: 0.0030009460169821978,
-      part: 'leftWrist',
-      position: { x: 477.58175653242415, y: 477.15672177563386 }
-    },
-    {
-      score: 0.0018567433580756187,
-      part: 'rightWrist',
-      position: { x: 35.11052024039777, y: 566.0000835967899 }
-    },
-    {
-      score: 0.01214566733688116,
-      part: 'leftHip',
-      position: { x: 367.91000069347336, y: 570.6071038747112 }
-    },
-    {
-      score: 0.02241980843245983,
-      part: 'rightHip',
-      position: { x: 77.76005637321028, y: 564.0506676106138 }
-    },
-    {
-      score: 0.0024687969125807285,
-      part: 'leftKnee',
-      position: { x: 363.3055521449226, y: 547.6730417926951 }
-    },
-    {
-      score: 0.00224827672354877,
-      part: 'rightKnee',
-      position: { x: 83.55323227463066, y: 567.5312953607581 }
-    },
-    {
-      score: 0.003778039710596204,
-      part: 'leftAnkle',
-      position: { x: 358.8411253064523, y: 554.6933007147526 }
-    },
-    {
-      score: 0.0016344732139259577,
-      part: 'rightAnkle',
-      position: { x: 114.97967582732323, y: 541.8461543576727 }
-    }
-  ]
+  let c=[width/2,height/2]
+  let shR = [c[0]+cLS/2*cos(theta)+cTS/2*cos(theta-pi/2),c[1]+cLS/2*sin(theta)+cTS/2*sin(theta-pi/2)]
+  let shL = [c[0]+cLS/2*cos(theta)-cTS/2*cos(theta-pi/2),c[1]+cLS/2*sin(theta)-cTS/2*sin(theta-pi/2)]
 
-  var hole3 = [
-    {
-      score: 0.9994639754295349,
-      part: 'nose',
-      position: { x: 232.86203584782345, y: 118.62191768007983 }
-    },
-    {
-      score: 0.9976266026496887,
-      part: 'leftEye',
-      position: { x: 270.83885697539216, y: 70.39151380961971 }
-    },
-    {
-      score: 0.9976453185081482,
-      part: 'rightEye',
-      position: { x: 169.8884255969571, y: 72.14987847591652 }
-    },
-    {
-      score: 0.7027348279953003,
-      part: 'leftEar',
-      position: { x: 328.4179087835527, y: 112.23599504404032 }
-    },
-    {
-      score: 0.39462345838546753,
-      part: 'rightEar',
-      position: { x: 110.12172357581468, y: 104.37331025238632 }
-    },
-    {
-      score: 0.8888581991195679,
-      part: 'leftShoulder',
-      position: { x: 440.74954496747324, y: 350.5919620499073 }
-    },
-    {
-      score: 0.14708012342453003,
-      part: 'rightShoulder',
-      position: { x: 7.1278209166768, y: 347.96071449606336 }
-    },
-    {
-      score: 0.20249921083450317,
-      part: 'leftElbow',
-      position: { x: 575.197059245425, y: 562.2936771259234 }
-    },
-    {
-      score: 0.006623457185924053,
-      part: 'rightElbow',
-      position: { x: -26.46600270549611, y: 586.1060710268725 }
-    },
-    {
-      score: 0.010042097419500351,
-      part: 'leftWrist',
-      position: { x: 513.3769217168311, y: 527.9036858109648 }
-    },
-    {
-      score: 0.0016283330041915178,
-      part: 'rightWrist',
-      position: { x: -8.212301647616732, y: 566.5943635576893 }
-    },
-    {
-      score: 0.0015943720936775208,
-      part: 'leftHip',
-      position: { x: 359.53968478547927, y: 590.4929265716197 }
-    },
-    {
-      score: 0.004022364504635334,
-      part: 'rightHip',
-      position: { x: 120.8380167029711, y: 582.9600459592352 }
-    },
-    {
-      score: 0.0012024715542793274,
-      part: 'leftKnee',
-      position: { x: 363.4826716560334, y: 553.2181697504066 }
-    },
-    {
-      score: 0.0016115811886265874,
-      part: 'rightKnee',
-      position: { x: 117.21536050046929, y: 553.2573990877501 }
-    },
-    {
-      score: 0.0012717257486656308,
-      part: 'leftAnkle',
-      position: { x: 355.3571349266438, y: 558.8037783255373 }
-    },
-    {
-      score: 0.0005611124797724187,
-      part: 'rightAnkle',
-      position: { x: 110.35364945111108, y: 554.9961327578771 }
-    }
-  ] 
-  
-  var allPoses = [hole1,hole2,hole3]
+  let waR = [c[0]-cLS/2*cos(theta)+cBS/2*cos(theta-pi/2),c[1]-cLS/2*sin(theta)+cBS/2*sin(theta-pi/2)]
+  let waL = [c[0]-cLS/2*cos(theta)-cBS/2*cos(theta-pi/2),c[1]-cLS/2*sin(theta)-cBS/2*sin(theta-pi/2)]
+
+  let elLR = pi+phi + rand()*2*pi/3-pi/3;
+  let elLS = (80-rand()*40)*scale;
+  let elL = [shL[0]+elLS*cos(elLR),shL[1]+elLS*sin(elLR)]
+  let hLS = (80-rand()*40)*scale;
+  let hLR = elLR + rand()*2*pi-pi;
+  let hL = [elL[0]+hLS*cos(hLR),elL[1]+hLS*sin(hLR)]
 
 
-  let random = Math.floor(Math.random() * Math.floor(3));
-  return hole1;
-  //return allPoses[random];
-  /*
+  let elRR =phi + rand()*2*pi/3-pi/3;
+  let elRS = (80-rand()*40)*scale;
+  let elR = [shR[0]+elRS*cos(elRR),shR[1]+elRS*sin(elRR)]
+  let hRS = (80-rand()*40)*scale;
+  let hRR = elRR + rand()*2*pi-pi;
+  let hR = [elR[0]+hRS*cos(hRR),elR[1]+hRS*sin(hRR)]
+
+  let knRr = phi - pi/2 +2*rand()*pi/3-pi/3;
+  let knRS = (110-rand()*60)*scale;
+  let knR = [waR[0]+knRS*cos(knRr), waR[1]+knRS*sin(knRr)]
+  let aRr = knRr + 0.1; 
+  let aRS = (70-rand()*30)*scale;
+  let aR = [knR[0]+aRS*cos(aRr), knR[1]+aRS*sin(aRr)]
+
+
+  let knLr = pi+phi + pi/2 +2*rand()*pi/3-pi/3;
+  let knLS = (110-rand()*60)*scale;
+  let knL = [waL[0]+knLS*cos(knLr), waL[1]+knLS*sin(knLr)]
+  let aLr = knLr + pi/2 +rand()*pi-pi/2; 
+  let aLS = (70-rand()*30)*scale;
+  let aL = [knL[0]+aLS*cos(aLr), knL[1]+aLS*sin(aLr)]
+
+
+  let hr = theta+rand()*0.2-0.1
+  let nS = 30*scale;
+  let n = [c[0]+cLS/2*cos(theta)+nS*cos(hr),c[1]+cLS/2*sin(theta)+nS*sin(hr)]
+
+  let eyD = 25*scale;
+  let eyR = [n[0]+cos(hr-pi/4)*eyD,n[1]+sin(hr-pi/4)*eyD]
+  let eyL = [n[0]+cos(hr+pi/4)*eyD,n[1]+sin(hr+pi/4)*eyD]
+
+  let eaD = eyD+7*scale
+  let ear = 0.5*scale;
+  let eaR = [n[0]+cos(hr-pi/4-ear)*eaD,n[1]+sin(hr-pi/4-ear)*eaD]
+  let eaL = [n[0]+cos(hr+pi/4+ear)*eaD,n[1]+sin(hr+pi/4+ear)*eaD]
+
   let hole=[
     {
-      score: 0.997854471206665,
+      score: 1,
       part: 'nose',
-      position: { x: 273.30447660809824, y: 218.66378012334326 }
+      position: { x: n[0], y: n[1] }
     },
     {
-      score: 0.9995414614677429,
+      score: 1,
       part: 'leftEye',
-      position: { x: 296.14995459174366, y: 198.94808912091685 }
+      position: { x: eyL[0], y: eyL[1] }
     },
     {
-      score: 0.9904188513755798,
+      score: 1,
       part: 'rightEye',
-      position: { x: 265.5430537717352, y: 201.28500511674105 }
+      position: { x: eyR[0], y: eyR[1] }
     },
     {
-      score: 0.9351797103881836,
+      score: 1,
       part: 'leftEar',
-      position: { x: 337.0180668812318, y: 218.31939816011067 }
+      position: { x: eaL[0], y: eaL[1] }
     },
     {
-      score: 0.07328098267316818,
+      score: 1,
       part: 'rightEar',
-      position: { x: 254.42494076977445, y: 213.22769818138983 }
+      position: { x: eaR[0], y: eaR[1] }
     },
     {
-      score: 0.9926152229309082,
+      score: 1,
       part: 'leftShoulder',
-      position: { x: 398.32964247766637, y: 339.4576112027298 }
+      position: { x: shL[0], y: shL[1] }
     },
     {
-      score: 0.965318500995636,
+      score: 1,
       part: 'rightShoulder',
-      position: { x: 211.50804690349892, y: 339.1268861525717 }
+      position: { x: shR[0], y: shR[1] }
     },
     {
-      score: 0.9304927587509155,
+      score: 1,
       part: 'leftElbow',
-      position: { x: 542.4161110963339, y: 427.8702577821012 }
+      position: { x: elL[0], y: elL[1] }
     },
     {
-      score: 0.624074399471283,
+      score: 1,
       part: 'rightElbow',
-      position: { x: 51.18601520701605, y: 394.3691307097558 }
+      position: { x: elR[0], y: elR[1] }
     },
     {
-      score: 0.8505564332008362,
+      score: 1,
       part: 'leftWrist',
-      position: { x: 501.78288916205616, y: 233.40952535547638 }
+      position: { x: hL[0], y: hL[1] }
     },
     {
-      score: 0.6258065104484558,
+      score: 1,
       part: 'rightWrist',
-      position: { x: 71.67409577722215, y: 217.41270072729208 }
+      position: { x: hR[0], y: hR[1] }
     },
     {
-      score: 0.0748775377869606,
+      score: 1,
       part: 'leftHip',
-      position: { x: 385.07964969145183, y: 552.1364537101775 }
+      position: { x: waL[0], y: waL[1] }
     },
     {
-      score: 0.18049569427967072,
+      score: 1,
       part: 'rightHip',
-      position: { x: 230.32427004803017, y: 561.6955545625798 }
+      position: { x: waR[0], y: waR[1] }
     },
     {
-      score: 0.010634002275764942,
+      score: 1,
       part: 'leftKnee',
-      position: { x: 397.9059980444407, y: 523.032170158416 }
+      position: { x: knL[0], y: knL[1] }
     },
     {
-      score: 0.014222485944628716,
+      score: 1,
       part: 'rightKnee',
-      position: { x: 190.44461558301163, y: 552.1907999357825 }
+      position: { x: knR[0], y: knR[1] }
     },
     {
-      score: 0.01490487065166235,
+      score: 1,
       part: 'leftAnkle',
-      position: { x: 392.64645943845755, y: 555.1041551879408 }
+      position: { x: aL[0], y: aL[1] }
     },
     {
-      score: 0.006625391077250242,
+      score: 1,
       part: 'rightAnkle',
-      position: { x: 195.3563028179718, y: 565.295788360477 }
+      position: { x: aR[0], y: aR[1] }
     }
   ]
 
   return hole
-  */
 }
 
 
@@ -475,19 +268,32 @@ for(let i = 0; i < numRooms; i++){
     if(rooms[i].running==false){
       rooms[i].running=true;
       console.log("starting")
+      rooms[i].hole=generateRandPos()
       roomloop = setInterval(posingtime, 10);
     }
   }
 
-  count=0
+  count=0;
+  warning = 300;
+  gametime = 600;
   function posingtime() {
-    
-    io.to(rooms[i].name).emit('roomdata', [rooms[i],hole]);
-    if(count>500){
+    if(count%10==0){
+      io.to(rooms[i].name).emit('time',Math.round((count-warning)/100));
+
+    }
+
+    if(count<warning){
+
+    } else if(count<warning+gametime) {
+
+      io.to(rooms[i].name).emit('roomdata', rooms[i]);
+
+    } else {
       count=0;
       clearInterval(roomloop); 
       end()
     }
+
     count++;
   }
 
@@ -498,7 +304,6 @@ for(let i = 0; i < numRooms; i++){
   }
   
 }
-
 
 http.listen(3000, () => {
   console.log('listening on *:3000');
