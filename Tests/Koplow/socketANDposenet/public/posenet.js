@@ -10,7 +10,7 @@ function poseNet(sketch, socket){
     let swidth = 640;
     sketch.setup = function() {
         let cnv = sketch.createCanvas(1280, 480);
-        cnv.position(50,200);
+        cnv.position(0,200);
         video = sketch.createCapture(sketch.VIDEO);
         video.size(640, 480);
         video.hide();
