@@ -16,7 +16,6 @@ var room = function(name){
   this.ready = [false,false]
   this.running = false
   this.hole = []
-
 }
 
 
@@ -262,6 +261,7 @@ for(let i = 0; i < numRooms; i++){
   function updates(){
     if(rooms[i].ready[0]==true && rooms[i].ready[1]==true){
       startGame();
+      
     }
   }
   function startGame(){

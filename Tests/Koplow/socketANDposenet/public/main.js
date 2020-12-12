@@ -6,11 +6,11 @@ var teamColors = ["#FF0000","#00FF00"]
 var pcolor = null;
 var player = 0;
 var winners = {};
-var count =0;
+
 var end = false;
 var started = false;
 function joinGame(){
-
+    var count =0;
     //Removes title screen
     var element = document.getElementById("titlescreen");
     element.parentNode.removeChild(element);
@@ -65,7 +65,7 @@ function joinGame(){
         rmessage.style.visibility = "visible";
         box.style.visibility="visible";
         started = true;
-        count=1;
+        count=0;
     }
 
     element.appendChild(welcomeInstruction);
@@ -100,13 +100,13 @@ function joinGame(){
             }
             allWinners.innerHTML = listWinners
             element.appendChild(allWinners);
-            count=1
+            count=0
             winners = {}
             end = true;
 
         }
         count+=1
-        
+
     }
     rmessage.appendChild(readyCheck); 
 
